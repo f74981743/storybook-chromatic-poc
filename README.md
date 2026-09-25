@@ -22,4 +22,6 @@ The `StatusCard` stories cover ready, attention, long-content, and narrow layout
 
 This repository is public, so GitHub can enforce the required UI Tests check on `main`. The `demo/visual-review-check` branch changes the Attention story's button label to exercise the review workflow in a pull request.
 
+The workflow starts for every PR into `main` because UI Tests is required. Its scope step compares the PR with its merge base (or a `main` push with the previous commit). Changes outside `.storybook/`, the `StatusCard` component and story, dependency manifests, and Storybook build configuration use Chromatic's `skip` option. Chromatic reports a passing check without capturing snapshots. Keep the scope list in the workflow aligned with the stories and shared files that can affect them. A relevant change still captures all four POC stories.
+
 The Storybook allowlist in `.storybook/main.ts` limits the pilot to four stories. With one browser and one mode, a full build uses roughly four billed snapshots. Expand the allowlist deliberately and watch Chromatic Billing before applying this to a larger component library.
