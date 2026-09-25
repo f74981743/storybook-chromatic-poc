@@ -21,7 +21,7 @@ export const Attention: Story = {
     title: "Review your settings",
     description: "One setting needs your attention before you continue.",
     status: "attention",
-    actionLabel: "Review settings",
+    actionLabel: "Check settings",
   },
 };
 

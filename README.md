@@ -20,6 +20,8 @@ The `StatusCard` stories cover ready, attention, long-content, and narrow layout
 4. Open a pull request into `main`. The workflow runs automatically. Chromatic's **UI Tests** check stays pending for visual changes, passes after all changes are accepted, and fails if changes are denied.
 5. In GitHub branch protection for `main`, require Chromatic's **UI Tests** check after it appears. The GitHub Actions job is separate and may pass while UI Tests waits for review.
 
-This repository is currently private under a GitHub account whose free plan does not enforce branch protection for private repositories. The UI Tests check can still report its status, but making it a merge requirement needs a plan that supports private-repository branch protection or a public repository. Decide on repository visibility before setting a required check.
+This repository is public, so GitHub can enforce the required UI Tests check on `main`. The `demo/visual-review-check` branch changes the Attention story's button label to exercise the review workflow in a pull request.
+
+The workflow starts for every PR into `main` because UI Tests is required. Its scope step compares the PR with its merge base (or a `main` push with the previous commit). Changes outside `.storybook/`, the `StatusCard` component and story, dependency manifests, and Storybook build configuration use Chromatic's `skip` option. Chromatic reports a passing check without capturing snapshots. Keep the scope list in the workflow aligned with the stories and shared files that can affect them. A relevant change still captures all four POC stories.
 
 The Storybook allowlist in `.storybook/main.ts` limits the pilot to four stories. With one browser and one mode, a full build uses roughly four billed snapshots. Expand the allowlist deliberately and watch Chromatic Billing before applying this to a larger component library.
