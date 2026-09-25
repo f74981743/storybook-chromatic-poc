@@ -20,4 +20,6 @@ The `StatusCard` stories cover ready, attention, long-content, and narrow layout
 4. Open a pull request into `main`. The workflow runs automatically. Chromatic's **UI Tests** check stays pending for visual changes, passes after all changes are accepted, and fails if changes are denied.
 5. In GitHub branch protection for `main`, require Chromatic's **UI Tests** check after it appears. The GitHub Actions job is separate and may pass while UI Tests waits for review.
 
+This repository is currently private under a GitHub account whose free plan does not enforce branch protection for private repositories. The UI Tests check can still report its status, but making it a merge requirement needs a plan that supports private-repository branch protection or a public repository. Decide on repository visibility before setting a required check.
+
 The Storybook allowlist in `.storybook/main.ts` limits the pilot to four stories. With one browser and one mode, a full build uses roughly four billed snapshots. Expand the allowlist deliberately and watch Chromatic Billing before applying this to a larger component library.
