@@ -19,6 +19,36 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+      - name: Check Storybook scope
+        id: scope
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          skip=false
+          if [ "$EVENT_NAME" != workflow_dispatch ] &&
+             [ -n "$BASE_SHA" ] &&
+             git cat-file -e "$BASE_SHA^{commit}" &&
+             git cat-file -e "$HEAD_SHA^{commit}"; then
+            base="$BASE_SHA"
+            if [ "$EVENT_NAME" = pull_request ]; then
+              base="$(git merge-base "$BASE_SHA" "$HEAD_SHA")"
+            fi
+
+            skip=true
+            while IFS= read -r -d '' file; do
+              case "$file" in
+                .storybook/*|src/StatusCard.tsx|src/StatusCard.stories.tsx|package.json|pnpm-lock.yaml|vite.config.ts|tsconfig.json|.github/workflows/chromatic.yml)
+                  skip=false
+                  break
+                  ;;
+              esac
+            done < <(git diff --name-only -z "$base" "$HEAD_SHA")
+          fi
+
+          echo "skip=$skip" >> "$GITHUB_OUTPUT"
       - uses: pnpm/action-setup@v4
         with:
           version: 10.8.1
@@ -30,3 +60,4 @@ jobs:
       - uses: chromaui/action@latest
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          skip: ${{ steps.scope.outputs.skip }}
